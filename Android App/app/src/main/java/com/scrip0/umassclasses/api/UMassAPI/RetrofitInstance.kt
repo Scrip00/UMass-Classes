@@ -1,4 +1,4 @@
-package com.scrip0.umassclasses.api
+package com.scrip0.umassclasses.api.UMassAPI
 
 import com.scrip0.umassmaps.other.Constants.BASE_URL
 import okhttp3.OkHttpClient

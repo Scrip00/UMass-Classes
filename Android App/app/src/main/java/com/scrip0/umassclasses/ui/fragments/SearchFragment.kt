@@ -30,6 +30,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 					searchProgressBar.isVisible = false
 //					addAllBuildings(result?.data)
 //					setupSearch()
+					viewModel.upsertClassesLocal(result?.data?.results)
 				}
 				Status.ERROR -> {
 					searchProgressBar.isVisible = false

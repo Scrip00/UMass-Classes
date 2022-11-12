@@ -1,4 +1,4 @@
-package com.scrip0.umassclasses.api.entities
+package com.scrip0.umassclasses.api.UMassAPI.entities
 
 data class UMassResponse(
     val count: Int,

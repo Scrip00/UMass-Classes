@@ -1,10 +1,12 @@
 package com.scrip0.umassclasses.ui.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.scrip0.umassclasses.api.entities.UMassResponse
+import com.scrip0.umassclasses.api.UMassAPI.entities.Result
+import com.scrip0.umassclasses.api.UMassAPI.entities.UMassResponse
 import com.scrip0.umassclasses.other.Resource
 import com.scrip0.umassclasses.repositories.UMassRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +33,15 @@ class MainViewModel @Inject constructor(
 					UMassRepository.getCourses().body()
 				)
 			)
+		}
+	}
+
+	fun upsertClassesLocal(classes: List<Result>?) {
+		viewModelScope.launch {
+			Log.d("LOLLMAO", "LOL")
+			classes?.let {
+			Log.d("LOLLMAO", classes[0].toString())
+			UMassRepository.upsertClassesLocal(classes) }
 		}
 	}
 }
