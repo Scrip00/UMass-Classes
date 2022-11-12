@@ -1,5 +1,6 @@
 package com.scrip0.umassclasses.db.local
 
+import android.util.Log
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -17,8 +18,9 @@ class Converters {
 	}
 
 	@TypeConverter
-	fun stringToDetails(string: String): Details {
+	fun stringToDetails(string: String?): Details {
 		val objectType = object : TypeToken<Details>() {}.type
+		string?.let { return Details() }
         return gson.fromJson(string, objectType)
 	}
 
@@ -28,8 +30,9 @@ class Converters {
 	}
 
 	@TypeConverter
-	fun stringToEnrollmentInformation(string: String): EnrollmentInformation {
+	fun stringToEnrollmentInformation(string: String?): EnrollmentInformation {
 		val objectType = object : TypeToken<EnrollmentInformation>() {}.type
+		string?.let { return EnrollmentInformation() }
         return gson.fromJson(string, objectType)
 	}
 
@@ -39,8 +42,9 @@ class Converters {
 	}
 
 	@TypeConverter
-	fun stringToOffering(string: String): List<Offering> {
+	fun stringToOffering(string: String?): List<Offering> {
 		val objectType = object : TypeToken<Offering>() {}.type
+		string?.let { return emptyList() }
         return gson.fromJson(string, objectType)
 	}
 
@@ -50,8 +54,9 @@ class Converters {
 	}
 
 	@TypeConverter
-	fun stringToSubject(string: String): Subject {
+	fun stringToSubject(string: String?): Subject {
 		val objectType = object : TypeToken<Subject>() {}.type
+		string?.let { return Subject() }
         return gson.fromJson(string, objectType)
 	}
 }

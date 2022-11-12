@@ -21,6 +21,11 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 		super.onViewCreated(view, savedInstanceState)
 
 		subscribeToObservers()
+
+		btnSubmit.setOnClickListener {
+			val text = etQuery.text
+			viewModel.getAllResults(text.toString())
+		}
 	}
 
 	private fun subscribeToObservers() {

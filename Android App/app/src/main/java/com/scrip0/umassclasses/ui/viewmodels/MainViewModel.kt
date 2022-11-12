@@ -38,10 +38,21 @@ class MainViewModel @Inject constructor(
 
 	fun upsertClassesLocal(classes: List<Result>?) {
 		viewModelScope.launch {
-			Log.d("LOLLMAO", "LOL")
 			classes?.let {
-			Log.d("LOLLMAO", classes[0].toString())
-			UMassRepository.upsertClassesLocal(classes) }
+				UMassRepository.upsertClassesLocal(classes)
+			}
+		}
+	}
+
+	fun getAllResults(query: String) {
+		viewModelScope.launch {
+			val classes = UMassRepository.getAllClassesLocal()
+			val res = classes.map {
+				it.description?.let { it1 ->
+					UMassRepository.getSimilarity(query, it1).body()
+				}
+			}
+			Log.d("LOLLMAO", res.toString())
 		}
 	}
 }
