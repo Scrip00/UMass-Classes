@@ -12,6 +12,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.scrip0.umassclasses.R
 import com.scrip0.umassclasses.other.User
@@ -37,19 +39,70 @@ class RegisterUserFragment : Fragment() {
 
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
+		val mAuth: FirebaseAuth = FirebaseAuth.getInstance();
+		val currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+		FirebaseAuth.getInstance().signOut();
+		if(currentUser != null){
 
-		nextPage.setOnClickListener {
 			val navOptions = NavOptions.Builder()
 				.setPopUpTo(R.id.RegisterUserFragment, true)
 				.build()
-			findNavController(it).navigate(
+			findNavController(requireView()).navigate(
 				R.id.action_RegisterUserFragment_to_searchFragment,
 				savedInstanceState,
 				navOptions
 			)
 		}
 
-		val mAuth: FirebaseAuth = FirebaseAuth.getInstance();
+		btnForgotPassword.setOnClickListener {
+
+			val email = editTextEmailAddress.text.toString().trim()
+			if (!(Patterns.EMAIL_ADDRESS.matcher(email).matches()) || email.isEmpty()) {
+				editTextEmailAddress.error = "Please Enter Email To Reset"
+				editTextPassword.requestFocus()
+				return@setOnClickListener
+			}
+
+			mAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
+				if(task.isSuccessful){
+					Toast.makeText(activity, "Email Sent!", Toast.LENGTH_LONG).show()
+				}
+			}
+		}
+		nextPage.setOnClickListener {
+
+			val email = editTextEmailAddress.text.toString().trim()
+			val password = editTextPassword.text.toString().trim()
+
+			if (!(Patterns.EMAIL_ADDRESS.matcher(email).matches()) || email.isEmpty()) {
+				editTextEmailAddress.error = "Invalid Email"
+				editTextPassword.requestFocus()
+				return@setOnClickListener
+			}
+			if (password.isEmpty() || password.length < 6) {
+				editTextPassword.error = "Invalid Password"
+				editTextPassword.requestFocus()
+				return@setOnClickListener
+			}
+
+
+			mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener{task ->
+
+			if(task.isSuccessful){
+				val navOptions = NavOptions.Builder()
+					.setPopUpTo(R.id.RegisterUserFragment, true)
+					.build()
+				findNavController(it).navigate(
+					R.id.action_RegisterUserFragment_to_searchFragment,
+					savedInstanceState,
+					navOptions
+				)
+			}
+
+
+			}
+		}
+
 		// button logic
 		registerButton.setOnClickListener {
 			val email = editTextEmailAddress.text.toString().trim()
@@ -80,6 +133,14 @@ class RegisterUserFragment : Fragment() {
 										"User has been Registered Successfully",
 										Toast.LENGTH_LONG
 									).show()
+									val navOptions = NavOptions.Builder()
+										.setPopUpTo(R.id.RegisterUserFragment, true)
+										.build()
+									findNavController(requireView()).navigate(
+										R.id.action_RegisterUserFragment_to_searchFragment,
+										savedInstanceState,
+										navOptions
+									)
 								} else {
 									Toast.makeText(
 										activity,
