@@ -14,6 +14,8 @@ class UMassRepository @Inject constructor(
 
 	suspend fun getCourses() = UMassRetrofitInstance.api.getCourses()
 
+	suspend fun getCoursesFromPage(page: String) = UMassRetrofitInstance.api.getCoursesFromPage(page)
+
 	suspend fun upsertClassesLocal(classes: List<Result>) = localClassesDao.upsertAllClasses(classes)
 
 	suspend fun getAllClassesLocal() = localClassesDao.getAllClasses()

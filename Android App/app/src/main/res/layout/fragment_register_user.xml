@@ -61,5 +61,13 @@
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintVertical_bias="0.993" />
 
+    <Button
+        android:id="@+id/nextPage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
