@@ -42,7 +42,7 @@ class RegisterUserFragment : Fragment() {
 		super.onViewCreated(view, savedInstanceState)
 		val mAuth: FirebaseAuth = FirebaseAuth.getInstance();
 		val currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-		FirebaseAuth.getInstance().signOut();
+//		FirebaseAuth.getInstance().signOut();
 		if (currentUser != null) {
 
 			val navOptions = NavOptions.Builder()

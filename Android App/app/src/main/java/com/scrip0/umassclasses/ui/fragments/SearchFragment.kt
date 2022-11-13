@@ -1,11 +1,11 @@
 package com.scrip0.umassclasses.ui.fragments
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,10 +23,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
 	private val viewModel: MainViewModel by viewModels()
 
+	@RequiresApi(Build.VERSION_CODES.N)
 	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 		super.onViewCreated(view, savedInstanceState)
 
 		subscribeToObservers()
+
+		viewModel.addNewPerson()
+
+		btnSaved.setOnClickListener {
+			Navigation.findNavController(it).navigate(
+				R.id.action_searchFragment_to_savedFragment,
+			)
+		}
 
 		btnSubmit.setOnClickListener {
 			val text = etQuery.text

@@ -1,10 +1,7 @@
 package com.scrip0.umassclasses.ui.viewmodels
 
-import android.R
-import android.content.Context
 import android.os.Build
 import android.util.Log
-import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -32,6 +29,9 @@ class MainViewModel @Inject constructor(
 
 	private val _searchLiveData = MutableLiveData<Resource<List<Result>>>()
 	val searchLiveData: LiveData<Resource<List<Result>>> = _searchLiveData
+
+	private val _savedLiveData = MutableLiveData<Resource<List<Result>>>()
+	val savedLiveData: LiveData<Resource<List<Result>>> = _savedLiveData
 
 	init {
 		fetchUMassCourses()
@@ -124,6 +124,24 @@ class MainViewModel @Inject constructor(
 				FilterOptions(list1, careerSet.toMutableList())
 			)
 		)
+	}
+
+	fun addNewPerson() = viewModelScope.launch{
+		UMassRepository.addNewPerson()
+	}
+
+	fun getClasses() = viewModelScope.launch{
+		_savedLiveData.postValue(Resource.loading(null))
+		val str = UMassRepository.getClasses()
+		var ids = str.split(",");
+		ids = ids.map { it.trim()}
+		var classes = UMassRepository.getAllClassesLocal()
+		classes = classes.filter { ids.contains(it.id) }
+		_savedLiveData.postValue(Resource.success(classes))
+	}
+
+	fun addClasses(str: String) = viewModelScope.launch{
+		UMassRepository.addClasses(str)
 	}
 
 	data class SPair(

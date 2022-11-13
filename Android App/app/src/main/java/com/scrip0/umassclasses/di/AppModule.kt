@@ -3,6 +3,7 @@ package com.scrip0.umassclasses.di
 
 import android.content.Context
 import androidx.room.Room
+import com.google.firebase.firestore.FirebaseFirestore
 import com.scrip0.umassclasses.db.local.LocalClassesDao
 import com.scrip0.umassclasses.db.local.LocalClassesDatabase
 import com.scrip0.umassclasses.repositories.UMassRepository
@@ -31,4 +32,8 @@ object AppModule {
 	@Singleton
 	@Provides
 	fun provideLocalClassesDao(db: LocalClassesDatabase): LocalClassesDao = db.getClassesDao()
+
+	@Singleton
+	@Provides
+	fun provideFirebaseFirestore() = FirebaseFirestore.getInstance()
 }
