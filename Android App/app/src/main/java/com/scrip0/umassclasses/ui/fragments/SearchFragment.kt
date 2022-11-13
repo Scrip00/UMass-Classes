@@ -1,7 +1,9 @@
 package com.scrip0.umassclasses.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 		super.onViewCreated(view, savedInstanceState)
 
 		subscribeToObservers()
+		setupFilters()
 
 		btnSubmit.setOnClickListener {
 			val text = etQuery.text
@@ -28,14 +31,20 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 		}
 	}
 
-	private fun subscribeToObservers() {
-		viewModel.coursesLiveData.observe(viewLifecycleOwner) { result ->
+	private fun setupFilters() {
+		viewModel.filterLiveData.observe(viewLifecycleOwner) { result ->
 			when (result.status) {
 				Status.SUCCESS -> {
 					searchProgressBar.isVisible = false
-//					addAllBuildings(result?.data)
-//					setupSearch()
-					viewModel.upsertClassesLocal(result.data)
+					val subjectFilerArr = mutableListOf<String>()
+					val subjectFilerAdapter = ArrayAdapter(
+						requireContext(), android.R.layout.simple_spinner_dropdown_item,
+						subjectFilerArr
+					)
+					subjectFiler.adapter = subjectFilerAdapter
+					subjectFilerArr.add("All")
+					result.data?.classFilter?.let { subjectFilerArr.addAll(it) }
+					subjectFilerAdapter.notifyDataSetChanged()
 				}
 				Status.ERROR -> {
 					searchProgressBar.isVisible = false
@@ -47,6 +56,28 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 				}
 				Status.LOADING -> {
 					searchProgressBar.isVisible = true
+				}
+			}
+		}
+	}
+
+	private fun subscribeToObservers() {
+		viewModel.coursesLiveData.observe(viewLifecycleOwner) { result ->
+			when (result.status) {
+				Status.SUCCESS -> {
+//					searchProgressBar.isVisible = false
+					viewModel.upsertClassesLocal(result.data)
+				}
+				Status.ERROR -> {
+//					searchProgressBar.isVisible = false
+					Toast.makeText(
+						context,
+						"Cannot load the data: ${result.message}",
+						Toast.LENGTH_LONG
+					).show()
+				}
+				Status.LOADING -> {
+//					searchProgressBar.isVisible = true
 				}
 			}
 		}

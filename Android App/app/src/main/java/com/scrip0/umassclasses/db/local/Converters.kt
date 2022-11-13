@@ -19,9 +19,10 @@ class Converters {
 
 	@TypeConverter
 	fun stringToDetails(string: String?): Details {
+		if (string.isNullOrBlank() || string == "null") return Details()
 		val objectType = object : TypeToken<Details>() {}.type
-		string?.let { return Details() }
-        return gson.fromJson(string, objectType)
+		return gson.fromJson(string, objectType)
+
 	}
 
 	@TypeConverter
@@ -31,9 +32,8 @@ class Converters {
 
 	@TypeConverter
 	fun stringToEnrollmentInformation(string: String?): EnrollmentInformation {
-		val objectType = object : TypeToken<EnrollmentInformation>() {}.type
-		string?.let { return EnrollmentInformation() }
-        return gson.fromJson(string, objectType)
+		if (string.isNullOrBlank() || string == "null") return EnrollmentInformation()
+		return gson.fromJson(string, EnrollmentInformation::class.java)
 	}
 
 	@TypeConverter
@@ -43,9 +43,9 @@ class Converters {
 
 	@TypeConverter
 	fun stringToOffering(string: String?): List<Offering> {
-		val objectType = object : TypeToken<Offering>() {}.type
-		string?.let { return emptyList() }
-        return gson.fromJson(string, objectType)
+		if (string.isNullOrBlank() || string == "null") return emptyList()
+		val objectType = object : TypeToken<List<Offering>>() {}.type
+		return gson.fromJson(string, objectType)
 	}
 
 	@TypeConverter
@@ -55,8 +55,7 @@ class Converters {
 
 	@TypeConverter
 	fun stringToSubject(string: String?): Subject {
-		val objectType = object : TypeToken<Subject>() {}.type
-		string?.let { return Subject() }
-        return gson.fromJson(string, objectType)
+		if (string.isNullOrBlank() || string == "null") return Subject()
+		return gson.fromJson(string, Subject::class.java)
 	}
 }

@@ -1,17 +1,20 @@
 package com.scrip0.umassclasses.ui.viewmodels
 
+import android.R
 import android.util.Log
+import android.widget.ArrayAdapter
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.scrip0.umassclasses.api.UMassAPI.entities.Result
-import com.scrip0.umassclasses.api.UMassAPI.entities.UMassResponse
+import com.scrip0.umassclasses.other.FilterOptions
 import com.scrip0.umassclasses.other.Resource
 import com.scrip0.umassclasses.repositories.UMassRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -21,8 +24,12 @@ class MainViewModel @Inject constructor(
 	private val _coursesLiveData = MutableLiveData<Resource<MutableList<Result>>>()
 	val coursesLiveData: LiveData<Resource<MutableList<Result>>> = _coursesLiveData
 
+	private val _filterLiveData = MutableLiveData<Resource<FilterOptions>>()
+	val filterLiveData: LiveData<Resource<FilterOptions>> = _filterLiveData
+
 	init {
 		fetchUMassCourses()
+		getFilterOptions()
 	}
 
 	private fun fetchUMassCourses() {
@@ -31,7 +38,7 @@ class MainViewModel @Inject constructor(
 			var course = UMassRepository.getCourses().body()
 			val courses = course?.results
 			var page = 1
-			while(course?.next != null) {
+			while (course?.next != null) {
 				page++
 				course = UMassRepository.getCoursesFromPage(page.toString()).body()
 				course?.results?.let { courses?.addAll(it) }
@@ -60,7 +67,34 @@ class MainViewModel @Inject constructor(
 					UMassRepository.getSimilarity(query, it1).body()
 				}
 			}
-			Log.d("LOLLMAO", res.toString())
 		}
+	}
+
+	fun getFilterOptions() = viewModelScope.launch {
+		_filterLiveData.postValue(
+			Resource.loading(null)
+		)
+		val classesSet = HashSet<String>()
+		val classes = UMassRepository.getAllClassesLocal()
+		classesSet.addAll(classes.map {
+			it.subject!!.id
+		})
+		classesSet.remove("")
+		val careerSet = HashSet<String>()
+		careerSet.addAll(classes.map {
+			if (it.details == null) {
+				""
+			} else {
+				it.details!!.career
+			}
+		})
+		careerSet.remove("")
+		val list1 = classesSet.toMutableList()
+		list1.sort()
+		_filterLiveData.postValue(
+			Resource.success(
+				FilterOptions(list1, careerSet.toMutableList())
+			)
+		)
 	}
 }
