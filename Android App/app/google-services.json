@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "577202068340",
+    "firebase_url": "https://umass-classes-5ff79-default-rtdb.firebaseio.com",
+    "project_id": "umass-classes-5ff79",
+    "storage_bucket": "umass-classes-5ff79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577202068340:android:7b1c1ada4ff18788306a21",
+        "android_client_info": {
+          "package_name": "com.scrip0.umassclasses"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "577202068340-l86eitl7n3a20mvcrld4bq1si4dn0ebm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChDIGBN--B-OnS-LNicRtbWQFmt_Qq9Ck"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "577202068340-l86eitl7n3a20mvcrld4bq1si4dn0ebm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

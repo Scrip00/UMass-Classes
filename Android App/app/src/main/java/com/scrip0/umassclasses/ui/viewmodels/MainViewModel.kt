@@ -18,8 +18,8 @@ class MainViewModel @Inject constructor(
 	private val UMassRepository: UMassRepository
 ) : ViewModel() {
 
-	private val _coursesLiveData = MutableLiveData<Resource<UMassResponse>>()
-	val coursesLiveData: LiveData<Resource<UMassResponse>> = _coursesLiveData
+	private val _coursesLiveData = MutableLiveData<Resource<MutableList<Result>>>()
+	val coursesLiveData: LiveData<Resource<MutableList<Result>>> = _coursesLiveData
 
 	init {
 		fetchUMassCourses()
@@ -28,9 +28,17 @@ class MainViewModel @Inject constructor(
 	private fun fetchUMassCourses() {
 		_coursesLiveData.postValue(Resource.loading(null))
 		viewModelScope.launch {
+			var course = UMassRepository.getCourses().body()
+			val courses = course?.results
+			var page = 1
+			while(course?.next != null) {
+				page++
+				course = UMassRepository.getCoursesFromPage(page.toString()).body()
+				course?.results?.let { courses?.addAll(it) }
+			}
 			_coursesLiveData.postValue(
 				Resource.success(
-					UMassRepository.getCourses().body()
+					courses
 				)
 			)
 		}
