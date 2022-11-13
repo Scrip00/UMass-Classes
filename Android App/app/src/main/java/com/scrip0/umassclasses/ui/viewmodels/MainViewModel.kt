@@ -1,8 +1,11 @@
 package com.scrip0.umassclasses.ui.viewmodels
 
 import android.R
+import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.ArrayAdapter
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +29,9 @@ class MainViewModel @Inject constructor(
 
 	private val _filterLiveData = MutableLiveData<Resource<FilterOptions>>()
 	val filterLiveData: LiveData<Resource<FilterOptions>> = _filterLiveData
+
+	private val _searchLiveData = MutableLiveData<Resource<List<Result>>>()
+	val searchLiveData: LiveData<Resource<List<Result>>> = _searchLiveData
 
 	init {
 		fetchUMassCourses()
@@ -59,14 +65,36 @@ class MainViewModel @Inject constructor(
 		}
 	}
 
-	fun getAllResults(query: String) {
+	@RequiresApi(Build.VERSION_CODES.N)
+	fun getAllResults(
+		query: String,
+		filterClass: String?,
+		filterCareer: String?,
+		filterClassN: String?
+	) {
 		viewModelScope.launch {
-			val classes = UMassRepository.getAllClassesLocal()
-			val res = classes.map {
-				it.description?.let { it1 ->
-					UMassRepository.getSimilarity(query, it1).body()
-				}
+			_searchLiveData.postValue(Resource.loading(null))
+			var classes = UMassRepository.getAllClassesLocal()
+			if (!filterClass.equals("All")) {
+				classes = classes.filter { it.subject?.id == filterClass }
 			}
+			if (!filterCareer.equals("All")) {
+				classes = classes.filter { it.details?.career == filterCareer }
+			}
+			if (!filterClassN.equals("") && !filterClassN.isNullOrBlank()) {
+				val classesN = filterClassN.split(",")
+				val chars = classesN.map { it.replace("\\s".toRegex(), "").toCharArray()[0] }
+				classes =
+					classes.filter { !it.number.isNullOrEmpty() && chars.contains(it.number!![0]) }
+			}
+			var res = classes.map {
+				SPair(it.description?.let { it1 ->
+					UMassRepository.getSimilarity(query, it1).body()?.similarity?.toDouble()
+				}, it)
+			}
+			res = res.filter { it.accuracy != null && it.accuracy >= 0.5 }
+			res = res.sortedByDescending { it.accuracy }
+			_searchLiveData.postValue(Resource.success(res.map { it.course!! }))
 		}
 	}
 
@@ -97,4 +125,9 @@ class MainViewModel @Inject constructor(
 			)
 		)
 	}
+
+	data class SPair(
+		val accuracy: Double?,
+		val course: Result?
+	)
 }
