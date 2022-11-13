@@ -1,4 +1,7 @@
 package com.scrip0.umassclasses.other
 
-class User {
+class User(email:String, password:String) {
+
+     val email = email
+     val password = password
 }
