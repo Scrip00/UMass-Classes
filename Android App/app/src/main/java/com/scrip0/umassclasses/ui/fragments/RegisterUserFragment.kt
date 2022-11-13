@@ -18,10 +18,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.scrip0.umassclasses.R
 import com.scrip0.umassclasses.other.User
 import com.scrip0.umassclasses.ui.viewmodels.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.fragment_register_user.*
 
-
+@AndroidEntryPoint
 class RegisterUserFragment : Fragment() {
 	private val viewModel: MainViewModel by viewModels()
 
@@ -42,7 +43,7 @@ class RegisterUserFragment : Fragment() {
 		val mAuth: FirebaseAuth = FirebaseAuth.getInstance();
 		val currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 		FirebaseAuth.getInstance().signOut();
-		if(currentUser != null){
+		if (currentUser != null) {
 
 			val navOptions = NavOptions.Builder()
 				.setPopUpTo(R.id.RegisterUserFragment, true)
@@ -64,7 +65,7 @@ class RegisterUserFragment : Fragment() {
 			}
 
 			mAuth.sendPasswordResetEmail(email).addOnCompleteListener { task ->
-				if(task.isSuccessful){
+				if (task.isSuccessful) {
 					Toast.makeText(activity, "Email Sent!", Toast.LENGTH_LONG).show()
 				}
 			}
@@ -86,18 +87,18 @@ class RegisterUserFragment : Fragment() {
 			}
 
 
-			mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener{task ->
+			mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
 
-			if(task.isSuccessful){
-				val navOptions = NavOptions.Builder()
-					.setPopUpTo(R.id.RegisterUserFragment, true)
-					.build()
-				findNavController(it).navigate(
-					R.id.action_RegisterUserFragment_to_searchFragment,
-					savedInstanceState,
-					navOptions
-				)
-			}
+				if (task.isSuccessful) {
+					val navOptions = NavOptions.Builder()
+						.setPopUpTo(R.id.RegisterUserFragment, true)
+						.build()
+					findNavController(it).navigate(
+						R.id.action_RegisterUserFragment_to_searchFragment,
+						savedInstanceState,
+						navOptions
+					)
+				}
 
 
 			}

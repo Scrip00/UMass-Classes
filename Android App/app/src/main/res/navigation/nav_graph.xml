@@ -14,5 +14,13 @@
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.scrip0.umassclasses.ui.fragments.SearchFragment"
-        android:label="SearchFragment" />
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_filterFragment"
+            app:destination="@id/filterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.scrip0.umassclasses.ui.fragments.FilterFragment"
+        android:label="FilterFragment" />
 </navigation>

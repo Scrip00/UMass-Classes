@@ -1,5 +1,6 @@
 package com.scrip0.umassclasses.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import com.scrip0.umassclasses.R
 import com.scrip0.umassclasses.other.Status
 import com.scrip0.umassclasses.ui.viewmodels.MainViewModel
@@ -23,43 +25,24 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 		super.onViewCreated(view, savedInstanceState)
 
 		subscribeToObservers()
-		setupFilters()
 
 		btnSubmit.setOnClickListener {
 			val text = etQuery.text
-			viewModel.getAllResults(text.toString())
+//			viewModel.getAllResults(text.toString())
+			val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE) ?: return@setOnClickListener
+			val filterClass = sharedPref.getString("filter_class", "All")
+			val filterCareer = sharedPref.getString("filter_career", "All")
+			val filterClassN = sharedPref.getString("filter_classN", "")
+			Toast.makeText(context, filterClass + filterCareer + filterClassN, Toast.LENGTH_LONG).show()
+		}
+
+		btnFilters.setOnClickListener {
+			Navigation.findNavController(it).navigate(
+				R.id.action_searchFragment_to_filterFragment,
+			)
 		}
 	}
 
-	private fun setupFilters() {
-		viewModel.filterLiveData.observe(viewLifecycleOwner) { result ->
-			when (result.status) {
-				Status.SUCCESS -> {
-					searchProgressBar.isVisible = false
-					val subjectFilerArr = mutableListOf<String>()
-					val subjectFilerAdapter = ArrayAdapter(
-						requireContext(), android.R.layout.simple_spinner_dropdown_item,
-						subjectFilerArr
-					)
-					subjectFiler.adapter = subjectFilerAdapter
-					subjectFilerArr.add("All")
-					result.data?.classFilter?.let { subjectFilerArr.addAll(it) }
-					subjectFilerAdapter.notifyDataSetChanged()
-				}
-				Status.ERROR -> {
-					searchProgressBar.isVisible = false
-					Toast.makeText(
-						context,
-						"Cannot load the data: ${result.message}",
-						Toast.LENGTH_LONG
-					).show()
-				}
-				Status.LOADING -> {
-					searchProgressBar.isVisible = true
-				}
-			}
-		}
-	}
 
 	private fun subscribeToObservers() {
 		viewModel.coursesLiveData.observe(viewLifecycleOwner) { result ->
